@@ -64,6 +64,7 @@ export function startQuoteCarousel(container, quotes, intervalMs = 10000) {
       return quoteData;
     } else if (quoteData.quote && quoteData.author) {
       // Handle new object format with HTML formatting
+      // Only the quote text is italic, author remains regular
       return `"<i>${quoteData.quote}</i>" – ${quoteData.author}`;
     }
     return '';
