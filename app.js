@@ -1,97 +1,21 @@
-class Effect {
-    move(bean, targetX, targetY) {
-        throw new Error("The 'move' method must be implemented in a subclass (es does NOT support abstract classes, so we have to throw an error to prevent the class from being instantiated).");
-    }
-}
+// app.js (ES module)
+import { initIconFollowAnimation } from "./icon-follow-animation.js";
+import { startQuoteCarousel } from "./quote-carousel.js";
 
-class NoEffect extends Effect {
-    move(bean, targetX, targetY) {
-        bean.style.left = targetX + 'px';
-        bean.style.top = targetY + 'px';
-    }
-}
+document.addEventListener("DOMContentLoaded", () => {
+  // 1) Icon/emoji dat de muis volgt (Strategy pattern)
+  initIconFollowAnimation({
+    bean: "#bean",
+    radiosSelector: 'input[name="bean-mode"]'
+  });
 
-class LeafEffect extends Effect {
-    constructor() {
-        super();
-        this.beanX = 0;
-        this.beanY = 0;
-        this.hop = 0;
-        this.rotation = 0;
-        setInterval(() => {
-            this.hop = Math.random() * 20 - 10; // Update de hop minder vaak
-        }, 500);
-    }
-
-    move(bean, targetX, targetY) {
-        // Bereken de nieuwe posities met een lichte vertraging (0.1)
-        this.beanX += (targetX - this.beanX) * 0.1;
-        this.beanY += (targetY - this.beanY) * 0.1;
-
-        // Voeg een sinusfunctie toe voor wiegende rotatie en zijwaartse beweging
-        const wiggle = Math.sin(Date.now() / 200) * 15; // Rotatie heen en weer
-        this.rotation = Math.sin(Date.now() / 300) * 15; // Zacht draaien
-
-        // Toepassen van wiegende beweging en rotatie op het blaadje
-        bean.style.left = (this.beanX + wiggle) + 'px';
-        bean.style.top = (this.beanY + this.hop) + 'px';
-        bean.style.transform = `translate(-50%, -50%) rotate(${this.rotation}deg)`;
-    }
-}
-
-class BeanEffect extends Effect  {
-    constructor() {
-        super(); 
-        this.beanX = 0;
-        this.beanY = 0;
-        this.jumpHeight = 0;
-    }
-
-    move(bean, targetX, targetY) {
-        this.beanX += (targetX - this.beanX) * 0.1;
-        this.beanY += (targetY - this.beanY) * 0.1;
-        this.jumpHeight = Math.abs(Math.sin(Date.now() / 300) * 15); // springende beweging
-        bean.style.left = this.beanX + 'px';
-        bean.style.top = (this.beanY - this.jumpHeight) + 'px';
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    const bean = document.getElementById('bean');
-    let targetX = 0, targetY = 0;
-    let strategy = new NoEffect();
-
-    // Muispositie bijwerken
-    document.addEventListener('mousemove', (e) => {
-        targetX = e.pageX;
-        targetY = e.pageY;
-    });
-
-    // Animatie op basis van de geselecteerde strategie
-    function animateBean() {
-        strategy.move(bean, targetX, targetY);
-        requestAnimationFrame(animateBean);
-    }
-
-    // Strategie bijwerken bij selectie van radio button
-    document.querySelectorAll('input[name="bean-mode"]').forEach((radio) => {
-        radio.addEventListener('change', (e) => {
-            const mode = e.target.value;
-            if (mode === 'none') {
-                bean.textContent = '';
-                strategy = new NoEffect();
-            }
-            if (mode === 'leaf') {
-                strategy = new LeafEffect();
-                bean.textContent = '🍃';
-            }
-            if (mode === 'bean') {
-                strategy = new BeanEffect();
-                bean.textContent = '🫘';
-            }
-        });
-    });
-
-    // Start de animatie
-    animateBean();
+  // 2) Wisselende quotes (elke 10s)
+  startQuoteCarousel("#quote-box", [
+    "Tell me and I forget, teach me and I may remember, involve me and I learn. – Benjamin Franklin",
+    "The best way to predict the future is to invent it. – Alan Kay",
+    "Programs must be written for people to read, and only incidentally for machines to execute. – Harold Abelson",
+    "Simplicity is the soul of efficiency. – Austin Freeman",
+    "In theory, theory and practice are the same. In practice, they are not. – Jan L. A. van de Snepscheut",
+    "First, solve the problem. Then, write the code. – John Johnson"
+  ], 10000);
 });

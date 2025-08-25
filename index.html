@@ -8,7 +8,7 @@
     <link href="styles.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
-    <script src="app.js" defer></script>
+    <script src="app.js" type="module"></script>
 </head>
 <body>
     <header>
@@ -24,7 +24,12 @@
                 <li><a href="/fswd">FSWD</a> - Full Stack Web Development</li>
                 <li><a href="/pwac">PWAC</a> - Project Web Application Construction</li>
             </ul>
-            <img src="logo-cnp-combi-van-vakken.png" alt="Combi logo" />
+            
+            <!-- Logo 1024 -> 256 px (1/4) -->
+            <img src="logo-cnp-combi-van-vakken.png" width="256" alt="Combi logo" />
+
+            <!-- Placeholder voor quote, linksonder onder het logo -->
+           <div id="quote-box" style="margin-top:10px; font-style:italic; font-size:0.9em; text-align:left; max-width:320px;"></div>
         </section>
         <aside>
             <h2>Is dat alles? (&lt;aside&gt;)</h2>
@@ -66,6 +71,6 @@ document.addEventListener('mousemove', function(e) {
             </details>
         </aside>
     </main>
-    <footer>&copy; 2024 AIM / HAN - Hogeschool Arnhem Nijmegen</footer>    
+    <footer>&copy; 2025 AIM / HAN - Hogeschool Arnhem Nijmegen</footer>    
 </body>
 </html>
