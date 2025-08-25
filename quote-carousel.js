@@ -82,9 +82,7 @@ export function startQuoteCarousel(container, quotes, intervalMs = 10000) {
   };
 
   const show = () => { 
-    const formattedQuote = formatQuote(quotes[i]);
-    console.log('Formatted quote:', formattedQuote);
-    box.innerHTML = formattedQuote; 
+    box.innerHTML = formatQuote(quotes[i]); 
     updateIndicators();
     i = (i + 1) % quotes.length; 
   };
