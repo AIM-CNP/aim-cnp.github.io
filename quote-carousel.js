@@ -10,7 +10,7 @@ function $(elOrSelector) {
 /**
  * Start een quote-carousel.
  * @param {string|HTMLElement} container Element of selector voor de quote.
- * @param {string[]} quotes Lijst met quotes.
+ * @param {Array<{quote: string, author: string}>|string[]} quotes Lijst met quotes (objecten of strings).
  * @param {number} intervalMs Interval in milliseconden (default 10000).
  * @returns {{stop: Function}} object met stop()
  */
@@ -24,7 +24,68 @@ export function startQuoteCarousel(container, quotes, intervalMs = 10000) {
   box.setAttribute("aria-live", "polite");
   box.style.whiteSpace = "pre-wrap";
 
-  const show = () => { box.textContent = quotes[i]; i = (i + 1) % quotes.length; };
+  // Create visual indicators (dots)
+  const indicatorsContainer = document.createElement('div');
+  indicatorsContainer.className = 'quote-indicators';
+  indicatorsContainer.style.cssText = `
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 10px;
+  `;
+  
+  // Create dots for each quote
+  const indicators = quotes.map((_, index) => {
+    const dot = document.createElement('span');
+    dot.className = 'quote-dot';
+    dot.style.cssText = `
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #ccc;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    `;
+    dot.addEventListener('click', () => {
+      i = index;
+      show();
+      resetTimer();
+    });
+    indicatorsContainer.appendChild(dot);
+    return dot;
+  });
+
+  // Insert indicators after the quote box
+  box.parentNode.insertBefore(indicatorsContainer, box.nextSibling);
+
+  const formatQuote = (quoteData) => {
+    if (typeof quoteData === 'string') {
+      // Handle legacy string format
+      return quoteData;
+    } else if (quoteData.quote && quoteData.author) {
+      // Handle new object format with HTML formatting
+      return `"<i>${quoteData.quote}</i>" – ${quoteData.author}`;
+    }
+    return '';
+  };
+
+  const updateIndicators = () => {
+    indicators.forEach((dot, index) => {
+      dot.style.backgroundColor = index === i ? '#333' : '#ccc';
+    });
+  };
+
+  const resetTimer = () => {
+    if (timerId) clearInterval(timerId);
+    timerId = setInterval(show, intervalMs);
+  };
+
+  const show = () => { 
+    box.innerHTML = formatQuote(quotes[i]); 
+    updateIndicators();
+    i = (i + 1) % quotes.length; 
+  };
+
   show();
   timerId = setInterval(show, intervalMs);
 
